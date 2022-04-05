@@ -5,7 +5,6 @@ import { getSession } from "next-auth/react"; // Auth
 // Types
 import type { NextApiRequest, NextApiResponse } from "next";
 export type Repo = {
-  id: number;
   fullName: string;
   htmlURL: string;
 };
@@ -69,7 +68,6 @@ export const getRepos = async (userId: string): Promise<Repo[]> => {
   for (const repo of sourceRepos) {
     if (!repo.archived && !repo.disabled && repo.permissions?.admin) {
       repos.push({
-        id: repo.id,
         fullName: repo.full_name,
         htmlURL: repo.html_url,
       });

@@ -1,3 +1,4 @@
+// Layout wrapper
 .layout {
   min-width: 100vw;
   min-height: calc(100vh - 100px);
@@ -15,6 +16,7 @@
   }
 }
 
+// Sizing
 .layout__main {
   display: flex;
   flex-direction: column;
@@ -22,6 +24,7 @@
   max-width: 400px;
 }
 
+// Authenticated
 .layout__main_auth {
   background-color: white;
   border: 1px solid var(--color-border);
@@ -55,6 +58,7 @@
   }
 }
 
+// Unauthenticated
 .layout__unauthenticated {
   max-width: 400px;
   background-color: white;

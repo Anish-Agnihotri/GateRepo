@@ -13,12 +13,15 @@
     "@octokit/rest": "^18.12.0",
     "@prisma/client": "^3.11.1",
     "axios": "^0.26.1",
+    "ethers": "^5.6.2",
     "next": "12.1.4",
     "next-auth": "^4.3.1",
+    "nextjs-progressbar": "^0.0.14",
     "prisma": "^3.11.1",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-loader-spinner": "^6.0.0-0",
+    "react-toastify": "^8.2.0",
     "sass": "^1.49.11"
   },
   "devDependencies": {
