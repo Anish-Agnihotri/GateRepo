@@ -1,7 +1,7 @@
 import axios from "axios"; // Requests
-import Link from "next/link";
-import { ethers, providers } from "ethers"; // Ethers
+import Link from "next/link"; // Routing
 import { useState } from "react"; // State management
+import Meta from "components/Meta"; // Meta
 import { toast } from "react-toastify"; // Toast notifications
 import { bufferToHex } from "ethereumjs-util"; // Utils: Buffer => Hex
 import styles from "styles/pages/Join.module.scss"; // Page styles
@@ -24,6 +24,13 @@ export default function Join({ gate }: { gate: GateExtended }) {
   const [connectionStarted, setConnectionStarted] = useState<boolean>(false);
   // Web3React setup
   const { active, account, activate, deactivate, library } = useWeb3React();
+
+  // Templated content
+  const templateDescription: string = gate.creator.name
+    ? // If creator name not null, personalize invitation
+      `${gate.creator.name} has invited you to join their private @${gate.repoOwner}/${gate.repoName} repository.`
+    : // Else, generalize invitation
+      `You have been invited to join the private @${gate.repoOwner}/${gate.repoName} repository.`;
 
   /**
    * Formats number to us-en format (commas)
@@ -123,6 +130,13 @@ export default function Join({ gate }: { gate: GateExtended }) {
 
   return (
     <div className={layoutStyles.layout}>
+      {/* Meta tags */}
+      <Meta
+        title={`GateRepo - @${gate.repoOwner}/${gate.repoName}`}
+        description={templateDescription}
+        url={`https://gaterepo.com/repo/join/${gate.id}`}
+      />
+
       {/* Logo */}
       <Link href="/">
         <a>
@@ -133,11 +147,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
       <div className={styles.join}>
         {/* Description */}
         <h2>Private Repo Invitation</h2>
-        <p>
-          {gate.creator.name
-            ? `${gate.creator.name} has invited you to join their private @${gate.repoOwner}/${gate.repoName} repository.`
-            : "You have been invited to join the private @${gate.repoOwner}/${gate.repoName} repository."}
-        </p>
+        <p>{}</p>
 
         {session && session.user.id && (
           // If authenticated, allow connecting wallet

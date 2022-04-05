@@ -2,8 +2,8 @@
 .join {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 400px;
+  width: calc(100% - 32px);
+  max-width: 432px;
 
   > h2 {
     text-align: center;

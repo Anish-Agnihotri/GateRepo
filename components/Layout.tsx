@@ -1,4 +1,5 @@
 import Link from "next/link"; // Routing
+import Meta from "components/Meta"; // Meta tags
 import styles from "styles/components/Layout.module.scss"; // Component styles
 import { useSession, signIn, signOut } from "next-auth/react"; // Auth
 
@@ -17,6 +18,9 @@ export default function Layout({
 
   return (
     <div className={styles.layout}>
+      {/* Meta tags */}
+      <Meta />
+
       {/* Logo */}
       <Link href="/">
         <a>
