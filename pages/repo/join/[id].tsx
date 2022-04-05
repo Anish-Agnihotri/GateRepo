@@ -147,7 +147,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
       <div className={styles.join}>
         {/* Description */}
         <h2>Private Repo Invitation</h2>
-        <p>{}</p>
+        <p>{templateDescription}</p>
 
         {session && session.user.id && (
           // If authenticated, allow connecting wallet
