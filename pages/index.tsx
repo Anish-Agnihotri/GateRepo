@@ -58,21 +58,6 @@ export default function Home({ userId }: { userId: string | null }) {
     setGateLoading(false); // Toggle loading
   };
 
-  /**
-   * Deletes gate
-   * @param {string} gateId to delete
-   */
-  const deleteGate = async (gateId: string) => {
-    try {
-      await axios.post("/api/gates/delete", { id: gateId });
-      await getGates();
-      toast.success("Successfully deleted gate.");
-    } catch (e) {
-      console.error(e);
-      toast.error("Error deleting gate.");
-    }
-  };
-
   // On mount -> Collect repos if authenticated
   useEffect(() => {
     if (userId && repos.length == 0) {
@@ -92,7 +77,7 @@ export default function Home({ userId }: { userId: string | null }) {
       <div className={styles.home}>
         {/* All private repos */}
         <h2>All Repos</h2>
-        <p>Private repos you have admin access to</p>
+        <p>Private repos you have admin access to:</p>
         <div className={styles.home__repo}>
           {repoLoading ? (
             // Loading state
@@ -125,56 +110,14 @@ export default function Home({ userId }: { userId: string | null }) {
 
         {/* Existing gated repos */}
         <h2>Gated Repos</h2>
-        <p>Active gates (remaining unused invites)</p>
+        <p>Active gates with unused invites:</p>
         <div className={styles.home__gates}>
           {gateLoading ? (
             // Loading state
             <Loading />
           ) : gates.length > 0 ? (
             gates.map((gate: Gate, i: number) => {
-              return (
-                <div className={styles.home__gates_item} key={i}>
-                  <div>
-                    <a
-                      href={`https://github.com/${gate.repoOwner}/${gate.repoName}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      @{gate.repoOwner}/{gate.repoName}
-                    </a>
-                    <p>
-                      Invites used: {gate.usedInvites}/{gate.numInvites}
-                    </p>
-                    <p>
-                      {gate.numTokens} token(s) required (contract:{" "}
-                      <a
-                        href={`https://etherscan.io/token/${gate.contract}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {gate.contract.substr(0, 6) +
-                          "..." +
-                          gate.contract.slice(gate.contract.length - 4)}
-                      </a>
-                      )
-                    </p>
-                  </div>
-                  <div>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          `https://gaterepo.com/join/${gate.id}`
-                        );
-                      }}
-                    >
-                      Copy Invite
-                    </button>
-                    <button onClick={() => deleteGate(gate.id)}>
-                      Delete Gate
-                    </button>
-                  </div>
-                </div>
-              );
+              return <IndividualGate gate={gate} getGates={getGates} key={i} />;
             })
           ) : (
             // Else, display empty
@@ -200,6 +143,98 @@ function Empty() {
   return (
     <div className={styles.home__empty}>
       <h3>No repos found</h3>
+    </div>
+  );
+}
+
+// Individual gate
+function IndividualGate({
+  gate,
+  getGates,
+}: {
+  gate: Gate;
+  getGates: () => void;
+}) {
+  const [copyText, setCopyText] = useState<string>("Copy Invite"); // Copy button
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false); // Delete button loading
+
+  /**
+   * Deletes gate
+   * @param {string} gateId to delete
+   */
+  const deleteGate = async (gateId: string) => {
+    setDeleteLoading(true); // Toggle loading
+
+    try {
+      // Push delete
+      await axios.post("/api/gates/delete", { id: gateId });
+      // Reload all gates
+      await getGates();
+      // Toast success
+      toast.success("Successfully deleted gate.");
+    } catch (e) {
+      // Else, log error
+      console.error(e);
+      toast.error("Error deleting gate.");
+    }
+
+    setDeleteLoading(false); // Toggle loading
+  };
+
+  /**
+   * Copy gateId to clipboard
+   * @param {string} gateId to copy
+   */
+  const copyInvite = (gateId: string) => {
+    // Copy to clipboard
+    navigator.clipboard.writeText(`https://gaterepo.com/join/${gateId}`);
+
+    // Update button
+    setCopyText("Copied!");
+    setTimeout(() => setCopyText("Copy Invite"), 2000);
+  };
+
+  return (
+    <div className={styles.home__gates_item}>
+      {/* Repository */}
+      <div>
+        <a
+          href={`https://github.com/${gate.repoOwner}/${gate.repoName}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          @{gate.repoOwner}/{gate.repoName}
+        </a>
+      </div>
+
+      {/* Invite status */}
+      <div>
+        <p>
+          Invites used: {gate.usedInvites}/{gate.numInvites}
+        </p>
+        <p>
+          {gate.numTokens} token{gate.numTokens > 1 ? "s" : ""} required
+          (contract:{" "}
+          <a
+            href={`https://etherscan.io/token/${gate.contract}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {gate.contract.substr(0, 6) +
+              "..." +
+              gate.contract.slice(gate.contract.length - 4)}
+          </a>
+          )
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div>
+        <button onClick={() => copyInvite(gate.id)}>{copyText}</button>
+        <button onClick={() => deleteGate(gate.id)} disabled={deleteLoading}>
+          {deleteLoading ? "Deleting..." : "Delete Gate"}
+        </button>
+      </div>
     </div>
   );
 }

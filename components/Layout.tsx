@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "styles/components/Layout.module.scss"; // Component styles
 import { useSession, signIn, signOut } from "next-auth/react"; // Auth
 
@@ -15,6 +16,13 @@ export default function Layout({
 
   return (
     <div className={styles.layout}>
+      {/* Logo */}
+      <Link href="/">
+        <a>
+          <img src="/logo.svg" alt="logo" />
+        </a>
+      </Link>
+
       {!session ? (
         // If unauthenticated, display unauthenticated
         <Unauthenticated />
@@ -35,16 +43,39 @@ export default function Layout({
                 }
                 alt="Avatar"
               />
+              <h3>{session.user.name}</h3>
             </div>
 
             {/* Name + Sign out */}
             <div>
-              <h3>{session.user.name}</h3>
               <button onClick={() => signOut()}>Sign out</button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Credits */}
+      <div className={styles.layout__credit}>
+        <p>
+          A quick{" "}
+          <a
+            href="https://github.com/anish-agnihotri/gaterepo"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            hack
+          </a>{" "}
+          by{" "}
+          <a
+            href="https://anishagnihotri.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Anish Agnihotri
+          </a>
+          .
+        </p>
+      </div>
     </div>
   );
 }
