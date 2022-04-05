@@ -1,7 +1,27 @@
+* {
+  --color-dark: #24292f;
+  --color-canvas: #f6f8fa;
+  --color-border: #d0d7de;
+  --color-button: #f4f5f7;
+  --color-button-hover: #f3f4f6;
+  --color-button-border: #1b1f2426;
+  --color-text-invert: #ffffffb3;
+  --color-text-primary: #24292f;
+  --color-text-secondary: #57606a;
+
+  // Green button
+  --color-button-green: #2da44e;
+  --color-button-green-hover: #2c974b;
+  --color-button-green-disabled: #ffffffcc;
+  --color-button-green-disabled-bg: #94d3a2;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
+  color: var(--color-text-primary);
+  background-color: var(--color-canvas);
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -13,4 +33,15 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+button {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  cursor: pointer;
+}
+
+input {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
