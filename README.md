@@ -59,6 +59,7 @@ npm run dev
 2. Application does not run a scheduled job to check continuing token ownership (to remove users who transfer their tokens). This is deferred to the user if desired functionality.
 3. Application currently only supports [ERC20 tokens](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) but is easily extensible to other token formats by updating the snapshot strategy in `/pages/api/gates/access.ts`.
 4. Allows a single address to verify token ownership on behalf of multiple GitHub users (not a one-to-one between GitHub users and addresses). Easily changeable should user require uniqueness by tracking address-to-gateId in database in `/pages/api/gates/access.ts`.
+5. GitHub OAuth scopes are fairly invasive (`repo,read:user,user:email`). If you are privacy-aware, I'd recommended running your own fork or migrating to an app-based system?
 
 # License
 
