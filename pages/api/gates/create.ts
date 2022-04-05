@@ -10,7 +10,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 // Ethers provider
 const provider = new ethers.providers.StaticJsonRpcProvider(
-  process.env.RPC_API
+  process.env.RPC_API,
+  1
 );
 
 /**

@@ -3,6 +3,9 @@ import NextAuth from "next-auth"; // Auth
 import GitHubProvider from "next-auth/providers/github"; // GitHub Auth
 import { PrismaAdapter } from "@next-auth/prisma-adapter"; // Auth => DB
 
+// Types
+import type { Account } from "@prisma/client";
+
 /**
  * Refreshes GitHub access token on each login
  * @param {string} providerAccountId to update
@@ -12,14 +15,26 @@ const updateAccessToken = async (
   providerAccountId: string,
   accessToken: string
 ): Promise<void> => {
-  await db.account.update({
-    where: {
-      // Select account by GitHub id
-      provider_providerAccountId: {
-        provider: "github",
-        providerAccountId,
-      },
+  // Select account by GitHub provider id
+  const selectionMetric = {
+    provider_providerAccountId: {
+      provider: "github",
+      providerAccountId,
     },
+  };
+
+  // Check if account exists
+  const account: Account | null = await db.account.findUnique({
+    where: selectionMetric,
+  });
+  // If no account existing:
+  if (!account) {
+    // Return to let Prisma adapter initially process new user
+    return;
+  }
+
+  await db.account.update({
+    where: selectionMetric,
     data: {
       // Update access token
       access_token: accessToken,

@@ -72,6 +72,8 @@ export default function Join({ gate }: { gate: GateExtended }) {
    * Join private repository
    */
   const joinRepo = async () => {
+    setJoinLoading(true); // Toggle loading
+
     // Generate message to sign
     const message: string = bufferToHex(
       Buffer.from(`GateRepo: Verifying my address is ${account}`)
@@ -88,7 +90,35 @@ export default function Join({ gate }: { gate: GateExtended }) {
     }
 
     // Revert if no signature
-    if (!signature) return;
+    if (!signature) {
+      setJoinLoading(false); // Toggle loading
+      return;
+    }
+
+    try {
+      // Post data to access
+      await axios.post("/api/gates/access", {
+        address: account,
+        signature,
+        gateId: gate.id,
+      });
+
+      // If successful, toast and redirect
+      toast.success("Successfully joined private repository. Redirecting...");
+      setTimeout(() => {
+        window.location.href = `https://github.com/${gate.repoOwner}/${gate.repoName}`;
+      }, 2000);
+    } catch (e: any) {
+      // If error message, toast
+      if (e?.response.data.error) {
+        toast.error(`Error: ${e.response.data.error}`);
+      }
+      // Else, log all errors
+      console.error(e);
+      setJoinLoading(false); // Toggle loading
+    }
+
+    setJoinLoading(false); // Toggle loading
   };
 
   return (
