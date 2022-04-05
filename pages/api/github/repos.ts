@@ -64,15 +64,25 @@ export const getRepos = async (userId: string): Promise<Repo[]> => {
   }
 
   let repos: Repo[] = [];
+  let repoExist: Record<string, boolean> = {};
   // Filter repos by admin & non-archive + non-disabled
   for (const repo of sourceRepos) {
+    // Filter repos for duplicates
+    // Occasionally, GitHub will duplicate API response on creating new repos
+    if (repo.full_name in repoExist) {
+      continue;
+    }
+
     if (!repo.archived && !repo.disabled && repo.permissions?.admin) {
       repos.push({
         fullName: repo.full_name,
         htmlURL: repo.html_url,
       });
+      // Update duplicates check
+      repoExist[repo.full_name] = true;
     }
   }
+
   return repos;
 };
 

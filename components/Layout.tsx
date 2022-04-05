@@ -1,10 +1,10 @@
-import Link from "next/link";
+import Link from "next/link"; // Routing
 import styles from "styles/components/Layout.module.scss"; // Component styles
 import { useSession, signIn, signOut } from "next-auth/react"; // Auth
 
 // Types
+import type { Session } from "next-auth";
 import type { ReactElement } from "react";
-import { Session } from "next-auth";
 
 // Layout wrapper
 export default function Layout({

@@ -61,11 +61,11 @@ model Gate {
   creatorId        String
   repoOwner        String
   repoName         String
-  blockNumber Int
+  blockNumber      Int
   contract         String
   contractName     String
   contractDecimals Int
-  numTokens        Int
+  numTokens        Float
   numInvites       Int
   usedInvites      Int    @default(0)
   creator          User   @relation(fields: [creatorId], references: [id])

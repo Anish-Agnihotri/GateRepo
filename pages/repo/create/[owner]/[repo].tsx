@@ -67,9 +67,12 @@ export default function Create({
         tokens: numTokens,
         invites: numParticipants,
       });
-      push("/");
+      // Copy invite to clipboard
       navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${id}`);
+
+      // Toast and return to home
       toast.success("Successfully created gated repository. Invite copied.");
+      push("/");
     } catch (e) {
       console.error(e);
       toast.error("Error when creating gated repository.");

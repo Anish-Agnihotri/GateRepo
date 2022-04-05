@@ -86,7 +86,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
     } catch (e) {
       // Throw error if user denied
       console.error(e);
-      toast.error("Error verifying Ethereum account.");
+      toast.error("Error: could not verify Ethereum account.");
     }
 
     // Revert if no signature
@@ -185,7 +185,9 @@ export default function Join({ gate }: { gate: GateExtended }) {
               // Connected
               <div className={styles.join__buttons_active}>
                 <button onClick={() => joinRepo()} disabled={joinLoading}>
-                  Accept Invitation
+                  {joinLoading
+                    ? "Accepting Invitation..."
+                    : "Accept Invitation"}
                 </button>
                 <button onClick={() => disconnectWallet()}>
                   Disconnect{" "}
