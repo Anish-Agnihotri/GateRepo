@@ -4,6 +4,7 @@ import { useSession, signIn, signOut } from "next-auth/react"; // Auth
 
 // Types
 import type { ReactElement } from "react";
+import { Session } from "next-auth";
 
 // Layout wrapper
 export default function Layout({
@@ -32,50 +33,12 @@ export default function Layout({
           {/* Render children */}
           <div>{children}</div>
 
-          {/* Render auth status */}
-          <div className={styles.layout__main_auth}>
-            <div>
-              <img
-                src={
-                  // GitHub image or identicon
-                  session.user.image ??
-                  `https://github.com/identicons/${session.user.id}.png`
-                }
-                alt="Avatar"
-              />
-              <h3>{session.user.name}</h3>
-            </div>
-
-            {/* Name + Sign out */}
-            <div>
-              <button onClick={() => signOut()}>Sign out</button>
-            </div>
-          </div>
+          {/* Auth status */}
+          <Authenticated session={session} />
         </div>
       )}
 
-      {/* Credits */}
-      <div className={styles.layout__credit}>
-        <p>
-          A quick{" "}
-          <a
-            href="https://github.com/anish-agnihotri/gaterepo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            hack
-          </a>{" "}
-          by{" "}
-          <a
-            href="https://anishagnihotri.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Anish Agnihotri
-          </a>
-          .
-        </p>
-      </div>
+      <Credits />
     </div>
   );
 }
@@ -89,6 +52,57 @@ function Unauthenticated() {
         private GitHub repositories.
       </p>
       <button onClick={() => signIn("github")}>Sign in with GitHub</button>
+    </div>
+  );
+}
+
+// Authenticated state
+export function Authenticated({ session }: { session: Session }) {
+  return (
+    <div className={styles.layout__main_auth}>
+      <div>
+        <img
+          src={
+            // GitHub image or identicon
+            session.user.image ??
+            `https://github.com/identicons/${session.user.id}.png`
+          }
+          alt="Avatar"
+        />
+        <h3>{session.user.name}</h3>
+      </div>
+
+      {/* Name + Sign out */}
+      <div>
+        <button onClick={() => signOut()}>Sign out</button>
+      </div>
+    </div>
+  );
+}
+
+// Credits
+export function Credits() {
+  return (
+    <div className={styles.layout__credit}>
+      <p>
+        A quick{" "}
+        <a
+          href="https://github.com/anish-agnihotri/gaterepo"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          hack
+        </a>{" "}
+        by{" "}
+        <a
+          href="https://anishagnihotri.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Anish Agnihotri
+        </a>
+        .
+      </p>
     </div>
   );
 }

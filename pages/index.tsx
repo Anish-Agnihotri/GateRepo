@@ -187,7 +187,7 @@ function IndividualGate({
    */
   const copyInvite = (gateId: string) => {
     // Copy to clipboard
-    navigator.clipboard.writeText(`https://gaterepo.com/join/${gateId}`);
+    navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${gateId}`);
 
     // Update button
     setCopyText("Copied!");

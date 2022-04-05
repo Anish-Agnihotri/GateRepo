@@ -1,0 +1,20 @@
+// Sizing
+.join {
+  > p {
+    font-size: 15px;
+    margin: 5px 0px 20px 0px;
+  }
+
+  > div {
+    background-color: white;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    margin-bottom: 30px;
+  }
+
+  h3 {
+    margin: 0px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
