@@ -4,21 +4,18 @@ import { ethers } from "ethers"; // Ethers
 import { useState } from "react"; // State management
 import { toast } from "react-toastify"; // Toast notifications
 import { getSession, useSession } from "next-auth/react"; // Auth
-import { getGate } from "pages/api/gates/access"; // Gate details
+import { getGate, GateExtended } from "pages/api/gates/access"; // Gate details
 import styles from "styles/pages/Join.module.scss"; // Page styles
 import layoutStyles from "styles/components/Layout.module.scss"; // Layout override styles
+import { Authenticated, Unauthenticated } from "components/Layout";
 
-// Types
-import type { Gate } from "@prisma/client";
-
-export default function Join({ gate }: { gate: Gate }) {
+export default function Join({ gate }: { gate: GateExtended }) {
   // Collect authenticated session
   const { data: session } = useSession();
 
-  console.log(gate);
+  console.log(session);
 
-  // Validation
-  const hasEmptyInvites: boolean = gate.numInvites - gate.usedInvites > 0;
+  console.log(gate);
 
   return (
     <div className={layoutStyles.layout}>
@@ -30,13 +27,33 @@ export default function Join({ gate }: { gate: Gate }) {
       </Link>
 
       <div className={styles.join}>
-        <h3>
-          You are invited to join @{gate.repoOwner}/{gate.repoName}
-        </h3>
+        {/* Description */}
+        <h2>Private Repo Invitation</h2>
+        <p>
+          {gate.creator.name
+            ? `${gate.creator.name} has invited you to join their private @${gate.repoOwner}/${gate.repoName} repository.`
+            : "You have been invited to join the private @${gate.repoOwner}/${gate.repoName} repository."}
+        </p>
 
-        <div>
-          <p>Test</p>
-        </div>
+        {session && session.user.id && (
+          // If authenticated, allow connecting wallet
+          <div>
+            <h2>Connect &amp; Join</h2>
+            <p>
+              Accessing this repository requires holding {gate.numTokens} ERC20
+              token{gate.numTokens == 1 ? "" : "s"}.
+            </p>
+          </div>
+        )}
+
+        {/* GitHub Authentication state */}
+        {!session || !session.user.id ? (
+          // Unauthenticated
+          <Unauthenticated />
+        ) : (
+          // Authenticated
+          <Authenticated session={session} />
+        )}
       </div>
     </div>
   );
@@ -53,8 +70,12 @@ export async function getServerSideProps(context: any) {
     if (!id) throw new Error();
 
     // Collect gate or throw
-    const gate: Gate | null = await getGate(id);
+    const gate: GateExtended | null = await getGate(id);
     if (!gate) throw new Error();
+
+    // Validation
+    const hasEmptyInvites: boolean = gate.numInvites - gate.usedInvites > 0;
+    if (!hasEmptyInvites) throw new Error();
 
     return {
       props: {

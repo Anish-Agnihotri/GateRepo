@@ -57,13 +57,16 @@ model VerificationToken {
 }
 
 model Gate {
-  id          String @id @default(cuid())
-  creatorId   String
-  repoOwner String
-  repoName  String
-  contract    String
-  numTokens   Int
-  numInvites  Int
-  usedInvites Int    @default(0)
-  creator     User   @relation(fields: [creatorId], references: [id])
+  id               String @id @default(cuid())
+  creatorId        String
+  repoOwner        String
+  repoName         String
+  blockNumber Int
+  contract         String
+  contractName     String
+  contractDecimals Int
+  numTokens        Int
+  numInvites       Int
+  usedInvites      Int    @default(0)
+  creator          User   @relation(fields: [creatorId], references: [id])
 }

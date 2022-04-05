@@ -44,7 +44,7 @@ export default function Layout({
 }
 
 // Sign in state
-function Unauthenticated() {
+export function Unauthenticated() {
   return (
     <div className={styles.layout__unauthenticated}>
       <p>

@@ -158,6 +158,8 @@ function IndividualGate({
   const [copyText, setCopyText] = useState<string>("Copy Invite"); // Copy button
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false); // Delete button loading
 
+  const numUnusedInvites: number = gate.numInvites - gate.usedInvites; // Unused invites
+
   /**
    * Deletes gate
    * @param {string} gateId to delete
@@ -194,6 +196,15 @@ function IndividualGate({
     setTimeout(() => setCopyText("Copy Invite"), 2000);
   };
 
+  /**
+   * Formats number to us-en format (commas)
+   * @param {number} num to format
+   * @returns {string} formatted number
+   */
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString("us-en");
+  };
+
   return (
     <div className={styles.home__gates_item}>
       {/* Repository */}
@@ -210,21 +221,19 @@ function IndividualGate({
       {/* Invite status */}
       <div>
         <p>
-          Invites used: {gate.usedInvites}/{gate.numInvites}
+          <strong>Unused Invites: </strong>
+          {formatNumber(numUnusedInvites)}
         </p>
         <p>
-          {gate.numTokens} token{gate.numTokens > 1 ? "s" : ""} required
-          (contract:{" "}
+          <strong>Token Gate:</strong> {formatNumber(gate.numTokens)}{" "}
           <a
             href={`https://etherscan.io/token/${gate.contract}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {gate.contract.substr(0, 6) +
-              "..." +
-              gate.contract.slice(gate.contract.length - 4)}
-          </a>
-          )
+            {gate.contractName}
+          </a>{" "}
+          token{gate.numTokens == 1 ? "" : "s"}
         </p>
       </div>
 
