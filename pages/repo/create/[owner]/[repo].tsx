@@ -60,7 +60,7 @@ export default function Create({
     try {
       const {
         data: { id },
-      }: { data: { id: string } } = await axios.post(`/api/gated/create`, {
+      }: { data: { id: string } } = await axios.post(`/api/gates/create`, {
         owner,
         repo: repository,
         contract: address,

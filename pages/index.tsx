@@ -8,6 +8,7 @@ import styles from "styles/pages/Home.module.scss"; // Page styles
 import { InfinitySpin } from "react-loader-spinner"; // Loader
 
 // Types
+import type { Gate } from "@prisma/client";
 import type { Repo } from "pages/api/github/repos";
 
 export default function Home({ userId }: { userId: string | null }) {
@@ -17,6 +18,10 @@ export default function Home({ userId }: { userId: string | null }) {
   // Repos + Loading
   const [repos, setRepos] = useState<Repo[]>([]);
   const [repoLoading, setRepoLoading] = useState<boolean>(true);
+
+  // Gates + loading
+  const [gates, setGates] = useState<Gate[]>([]);
+  const [gateLoading, setGateLoading] = useState<boolean>(true);
 
   /**
    * Collects all private repos where user has admin access
@@ -35,10 +40,50 @@ export default function Home({ userId }: { userId: string | null }) {
     setRepoLoading(false); // Toggle loading
   };
 
+  /**
+   * Collects all gates
+   */
+  const getGates = async () => {
+    setGateLoading(true); // Toggle loading
+
+    try {
+      // Collect and store
+      const { data } = await axios.get("/api/gates/all");
+      console.log(data);
+      setGates(data);
+    } catch (e) {
+      console.error(e);
+    }
+
+    setGateLoading(false); // Toggle loading
+  };
+
+  /**
+   * Deletes gate
+   * @param {string} gateId to delete
+   */
+  const deleteGate = async (gateId: string) => {
+    try {
+      await axios.post("/api/gates/delete", { id: gateId });
+      await getGates();
+      toast.success("Successfully deleted gate.");
+    } catch (e) {
+      console.error(e);
+      toast.error("Error deleting gate.");
+    }
+  };
+
   // On mount -> Collect repos if authenticated
   useEffect(() => {
     if (userId && repos.length == 0) {
       getAllRepos();
+    }
+  }, [userId]);
+
+  // On mount -> Collect gates if authenticated
+  useEffect(() => {
+    if (userId && gates.length == 0) {
+      getGates();
     }
   }, [userId]);
 
@@ -80,9 +125,61 @@ export default function Home({ userId }: { userId: string | null }) {
 
         {/* Existing gated repos */}
         <h2>Gated Repos</h2>
-        <p>Repos currently gated by GateRepo</p>
-        <div>
-          <Empty />
+        <p>Active gates (remaining unused invites)</p>
+        <div className={styles.home__gates}>
+          {gateLoading ? (
+            // Loading state
+            <Loading />
+          ) : gates.length > 0 ? (
+            gates.map((gate: Gate, i: number) => {
+              return (
+                <div className={styles.home__gates_item} key={i}>
+                  <div>
+                    <a
+                      href={`https://github.com/${gate.repoOwner}/${gate.repoName}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      @{gate.repoOwner}/{gate.repoName}
+                    </a>
+                    <p>
+                      Invites used: {gate.usedInvites}/{gate.numInvites}
+                    </p>
+                    <p>
+                      {gate.numTokens} token(s) required (contract:{" "}
+                      <a
+                        href={`https://etherscan.io/token/${gate.contract}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {gate.contract.substr(0, 6) +
+                          "..." +
+                          gate.contract.slice(gate.contract.length - 4)}
+                      </a>
+                      )
+                    </p>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `https://gaterepo.com/join/${gate.id}`
+                        );
+                      }}
+                    >
+                      Copy Invite
+                    </button>
+                    <button onClick={() => deleteGate(gate.id)}>
+                      Delete Gate
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            // Else, display empty
+            <Empty />
+          )}
         </div>
       </div>
     </Layout>

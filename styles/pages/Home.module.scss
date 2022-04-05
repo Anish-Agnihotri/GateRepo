@@ -87,3 +87,66 @@
     color: var(--color-text-secondary);
   }
 }
+
+// Gates
+.home__gates {
+  max-height: 240px;
+  overflow-y: scroll;
+}
+
+// Gate item
+.home__gates_item {
+  margin: 10px;
+  border-radius: 6px;
+  background-color: var(--color-button-hover);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > div:nth-of-type(1) {
+    width: 100%;
+    padding: 10px;
+
+    > a {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-dark);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    > p {
+      margin: 3px 0px;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  > div:nth-of-type(2) {
+    width: 100%;
+    padding: 0px 10px 10px 10px;
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      padding: 5px 12px;
+      width: 48%;
+      font-size: 12px;
+      line-height: 20px;
+      background-color: var(--color-button);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+      transition: 100ms ease;
+
+      &:hover {
+        border-color: rgba(27, 31, 36, 0.15);
+        opacity: 0.6;
+      }
+    }
+  }
+}
