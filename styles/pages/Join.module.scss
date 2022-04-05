@@ -30,3 +30,99 @@
     font-weight: 600;
   }
 }
+
+// Wallet
+.join__wallet {
+  padding: 20px;
+
+  h3 {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  p {
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 20px;
+    margin-top: 5px;
+
+    a {
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 82px;
+    padding-top: 10px;
+  }
+}
+
+// Buttons
+.join__buttons_inactive {
+  button {
+    padding: 5px 12px;
+    width: 100%;
+    font-size: 14px;
+    line-height: 20px;
+    background-color: var(--color-button);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+    transition: 100ms ease;
+
+    &:hover {
+      border-color: rgba(27, 31, 36, 0.15);
+      background-color: var(--color-button-hover);
+    }
+  }
+}
+
+// Buttons - Active
+.join__buttons_active {
+  height: 68px !important;
+
+  button:nth-of-type(1) {
+    padding: 5px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    line-height: 20px;
+    background-color: var(--color-button-green);
+    border: 1px solid var(--color-button-border);
+    border-radius: 6px;
+    transition: 100ms ease;
+    box-shadow: rgba(27, 31, 36, 0.1) 0px 1px 0px 0;
+
+    &:hover {
+      color: var(--color-button-hover);
+      background-color: var(--color-button-green-hover);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--color-button-green-disabled);
+      background-color: var(--color-button-green-disabled-bg);
+    }
+  }
+
+  button:nth-of-type(2) {
+    background-color: transparent;
+    border: none;
+    font-size: 12px;
+    text-decoration: underline;
+    color: var(--color-text-secondary);
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}

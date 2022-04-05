@@ -225,7 +225,7 @@ function IndividualGate({
           {formatNumber(numUnusedInvites)}
         </p>
         <p>
-          <strong>Token Gate:</strong> {formatNumber(gate.numTokens)}{" "}
+          <strong>Tokens Required:</strong> {formatNumber(gate.numTokens)}{" "}
           <a
             href={`https://etherscan.io/token/${gate.contract}`}
             target="_blank"
@@ -234,6 +234,16 @@ function IndividualGate({
             {gate.contractName}
           </a>{" "}
           token{gate.numTokens == 1 ? "" : "s"}
+        </p>
+        <p>
+          <strong>Token Check Block Number:</strong>{" "}
+          <a
+            href={`https://etherscan.io/block/${gate.blockNumber}`}
+            target="_blank;"
+            rel="noopener noreferrer"
+          >
+            #{formatNumber(gate.blockNumber)}
+          </a>
         </p>
       </div>
 

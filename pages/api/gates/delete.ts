@@ -44,6 +44,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
   if (!session || !session.user.id) {
     res.status(500).send({ error: "Not authenticated." });
+    return;
   }
 
   // Collect body params and check for non-empty
@@ -54,12 +55,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } = req.body;
   if (!id) {
     res.status(500).send({ error: "Missing parameters." });
+    return;
   }
 
   try {
     // Delete gate
     await deleteGate(session?.user.id ?? "", id);
-    res.status(200).send(true);
+    res.status(200).send({ deleted: true });
   } catch (e) {
     // Else, return error
     res.status(500).send({ error: String(e) });

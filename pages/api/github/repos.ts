@@ -81,6 +81,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
   if (!session || !session.user.id) {
     res.status(500).send({ error: "Not authenticated." });
+    return;
   }
 
   try {

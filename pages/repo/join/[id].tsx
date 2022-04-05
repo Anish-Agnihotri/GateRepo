@@ -1,21 +1,95 @@
 import axios from "axios"; // Requests
 import Link from "next/link";
-import { ethers } from "ethers"; // Ethers
+import { ethers, providers } from "ethers"; // Ethers
 import { useState } from "react"; // State management
 import { toast } from "react-toastify"; // Toast notifications
+import { bufferToHex } from "ethereumjs-util"; // Utils: Buffer => Hex
+import styles from "styles/pages/Join.module.scss"; // Page styles
 import { getSession, useSession } from "next-auth/react"; // Auth
 import { getGate, GateExtended } from "pages/api/gates/access"; // Gate details
-import styles from "styles/pages/Join.module.scss"; // Page styles
 import layoutStyles from "styles/components/Layout.module.scss"; // Layout override styles
-import { Authenticated, Unauthenticated } from "components/Layout";
+import { Authenticated, Unauthenticated } from "components/Layout"; // Auth components
+
+// Web3
+import { useWeb3React } from "@web3-react/core";
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
 
 export default function Join({ gate }: { gate: GateExtended }) {
   // Collect authenticated session
   const { data: session } = useSession();
+  // Join loading
+  const [joinLoading, setJoinLoading] = useState<boolean>(false);
+  // Web3React connection
+  const [connectionStarted, setConnectionStarted] = useState<boolean>(false);
+  // Web3React setup
+  const { active, account, activate, deactivate, library } = useWeb3React();
 
-  console.log(session);
+  /**
+   * Formats number to us-en format (commas)
+   * @param {number} num to format
+   * @returns {string} formatted number
+   */
+  const formatNumber = (num: number): string => {
+    return num.toLocaleString("us-en");
+  };
 
-  console.log(gate);
+  /**
+   * Connect metamask
+   */
+  const connectMetaMask = () => {
+    setConnectionStarted(true);
+    activate(
+      new InjectedConnector({
+        supportedChainIds: [1],
+      })
+    );
+    setConnectionStarted(false);
+  };
+
+  /**
+   * Connect WalletConnect
+   */
+  const connectWalletConnect = () => {
+    setConnectionStarted(true);
+    activate(
+      new WalletConnectConnector({
+        rpc: { 1: process.env.NEXT_PUBLIC_RPC ?? "" },
+      })
+    );
+    setConnectionStarted(false);
+  };
+
+  /**
+   * Disconnect wallet
+   */
+  const disconnectWallet = () => {
+    deactivate();
+    setConnectionStarted(false);
+  };
+
+  /**
+   * Join private repository
+   */
+  const joinRepo = async () => {
+    // Generate message to sign
+    const message: string = bufferToHex(
+      Buffer.from(`GateRepo: Verifying my address is ${account}`)
+    );
+
+    let signature: string | null = null;
+    try {
+      // Request signature from wallet
+      signature = await library.send("personal_sign", [message, account]);
+    } catch (e) {
+      // Throw error if user denied
+      console.error(e);
+      toast.error("Error verifying Ethereum account.");
+    }
+
+    // Revert if no signature
+    if (!signature) return;
+  };
 
   return (
     <div className={layoutStyles.layout}>
@@ -37,12 +111,60 @@ export default function Join({ gate }: { gate: GateExtended }) {
 
         {session && session.user.id && (
           // If authenticated, allow connecting wallet
-          <div>
-            <h2>Connect &amp; Join</h2>
+          <div className={styles.join__wallet}>
+            <h3>{!active ? "Connect Wallet" : "Join Repository"}</h3>
             <p>
-              Accessing this repository requires holding {gate.numTokens} ERC20
-              token{gate.numTokens == 1 ? "" : "s"}.
+              Accessing this repository requires having held{" "}
+              {formatNumber(gate.numTokens)}{" "}
+              <a
+                href={`https://etherscan.io/token/${gate.contract}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {gate.contractName}
+              </a>{" "}
+              token{gate.numTokens == 1 ? "" : "s"} at block{" "}
+              <a
+                href={`https://etherscan.io/block/${gate.blockNumber}`}
+                target="_blank;"
+                rel="noopener noreferrer"
+              >
+                #{formatNumber(gate.blockNumber)}
+              </a>
+              .
             </p>
+
+            {/* Connect wallet */}
+            {!active ? (
+              // Not active
+              <div className={styles.join__buttons_inactive}>
+                <button
+                  onClick={() => connectMetaMask()}
+                  disabled={connectionStarted}
+                >
+                  Connect MetaMask
+                </button>
+                <button
+                  onClick={() => connectWalletConnect()}
+                  disabled={connectionStarted}
+                >
+                  Connect WalletConnect
+                </button>
+              </div>
+            ) : (
+              // Connected
+              <div className={styles.join__buttons_active}>
+                <button onClick={() => joinRepo()} disabled={joinLoading}>
+                  Accept Invitation
+                </button>
+                <button onClick={() => disconnectWallet()}>
+                  Disconnect{" "}
+                  {account?.substr(0, 6) +
+                    "..." +
+                    account?.slice(account?.length - 4)}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

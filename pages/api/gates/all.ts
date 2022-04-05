@@ -21,6 +21,8 @@ export const getGatesByUser = async (userId: string): Promise<Gate[]> => {
     )
       // Filter by unused
       .filter((v) => v.numInvites != v.usedInvites)
+      // Sort by block number
+      .sort((a, b) => b.blockNumber - a.blockNumber)
   );
 };
 
@@ -29,6 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
   if (!session || !session.user.id) {
     res.status(500).send({ error: "Not authenticated." });
+    return;
   }
 
   try {

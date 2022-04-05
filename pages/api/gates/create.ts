@@ -93,6 +93,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
   if (!session || !session.user.id) {
     res.status(500).send({ error: "Not authenticated." });
+    return;
   }
 
   // Collect body params and check for non-empty
@@ -111,6 +112,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } = req.body;
   if (!owner || !repo || !isValidAddress(contract) || !tokens || !invites) {
     res.status(500).send({ error: "Missing parameters." });
+    return;
   }
 
   try {

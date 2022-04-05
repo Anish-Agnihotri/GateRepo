@@ -65,12 +65,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req });
   if (!session || !session.user.id) {
     res.status(500).send({ error: "Not authenticated." });
+    return;
   }
 
   // Collect body params and check for non-empty
   const { owner, repo }: { owner: string; repo: string } = req.body;
   if (!owner || !repo) {
     res.status(500).send({ error: "Missing owner or repo." });
+    return;
   }
 
   try {
