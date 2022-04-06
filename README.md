@@ -53,6 +53,14 @@ vim .env
 npm run dev
 ```
 
+## Environment variables
+
+1. `NEXTAUTH_URL`: Site link, `http://localhost:3000` if developing locally, `https://gaterepo.com` for this deployed instance
+2. `NEXTAUTH_SECRET`: Any randomly generated string as a secret, e.g.: `NpUFdWakhCjbuIIogCvj`
+3. `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`: Follow the instructions [here](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) for spinning up a new GitHub OAuth application. When asked, the authorization callback URL is `http://localhost:3000/api/auth/callback/github` (local) or `https://your_domain.com/api/auth/callback/github` (deployed). Once setup, your OAuth applications `Client ID` is your `GITHUB_CLIENT_ID` and your `Client Secret` is your `GITHUB_CLIENT_SECRET`
+4. `DATABASE_URL`: Postgres database connection URL
+5. `RPC_API`: Any Ethereum Mainnet JSON-RPC endpoint
+
 # Limitations
 
 1. GitHub API has a rate-limit of sending a maximum of [50 invitations](https://octokit.github.io/rest.js/v18#repos-add-collaborator) for a repository per 24 hour period.
