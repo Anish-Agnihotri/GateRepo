@@ -245,6 +245,11 @@ function IndividualGate({
             #{formatNumber(gate.blockNumber)}
           </a>
         </p>
+        {gate.readOnly ? (
+          <p>
+            <strong>Permission:</strong> Read-only
+          </p>
+        ) : null}
       </div>
 
       {/* Actions */}

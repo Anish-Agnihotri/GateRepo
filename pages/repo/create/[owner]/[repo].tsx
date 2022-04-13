@@ -45,6 +45,7 @@ export default function Create({
   const [numTokens, setNumTokens] = useState<number>(1); // Number of required tokens
   const [loading, setLoading] = useState<boolean>(false); // Loading
   const [numParticipants, setNumParticipants] = useState<number>(10); // Maximum invite count
+  const [readOnly, setReadOnly] = useState<boolean>(false); // Read only permission
 
   // Input validation
   const invalidAddress: boolean = !isValidAddress(address);
@@ -66,6 +67,7 @@ export default function Create({
         contract: address,
         tokens: numTokens,
         invites: numParticipants,
+        readOnly,
       });
       // Copy invite to clipboard
       navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${id}`);
@@ -127,6 +129,19 @@ export default function Create({
             value={numParticipants}
             onChange={(e) => setNumParticipants(Number(e.target.value))}
           />
+
+          {/* Read only permission - Show only if repo is owned by org */}
+          {repo.isOrg ? (
+            <>
+              <label htmlFor="readOnly">Enable read-only access</label>
+              <input
+                id="readOnly"
+                type="checkbox"
+                checked={readOnly}
+                onChange={() => setReadOnly(!readOnly)}
+              />{" "}
+            </>
+          ) : null}
 
           {/* Create gated repository */}
           <button

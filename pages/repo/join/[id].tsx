@@ -108,6 +108,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
         address: account,
         signature,
         gateId: gate.id,
+        readOnly: gate.readOnly,
       });
 
       // If successful, toast and redirect
