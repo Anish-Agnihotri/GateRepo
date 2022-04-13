@@ -7,6 +7,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export type Repo = {
   fullName: string;
   htmlURL: string;
+  isOrg: boolean;
 };
 
 /**
@@ -72,11 +73,13 @@ export const getRepos = async (userId: string): Promise<Repo[]> => {
     if (repo.full_name in repoExist) {
       continue;
     }
+    const isOrg = repo.owner.type === "Organization";
 
     if (!repo.archived && !repo.disabled && repo.permissions?.admin) {
       repos.push({
         fullName: repo.full_name,
         htmlURL: repo.html_url,
+        isOrg,
       });
       // Update duplicates check
       repoExist[repo.full_name] = true;
