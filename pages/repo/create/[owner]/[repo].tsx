@@ -133,13 +133,15 @@ export default function Create({
           {/* Read only permission - Show only if repo is owned by org */}
           {repo.isOrg ? (
             <>
-              <label htmlFor="readOnly">Enable read-only access</label>
-              <input
-                id="readOnly"
-                type="checkbox"
-                checked={readOnly}
-                onChange={() => setReadOnly(!readOnly)}
-              />{" "}
+              <label htmlFor="readOnly" className={styles.checkbox}>
+                <input
+                  id="readOnly"
+                  type="checkbox"
+                  checked={readOnly}
+                  onChange={() => setReadOnly(!readOnly)}
+                />
+                Read-only access
+              </label>
             </>
           ) : null}
 
