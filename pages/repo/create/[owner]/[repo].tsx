@@ -69,8 +69,9 @@ export default function Create({
         invites: numParticipants,
         readOnly,
       });
+      const domain = process.env.NEXT_PUBLIC_URL;
       // Copy invite to clipboard
-      navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${id}`);
+      navigator.clipboard.writeText(`${domain}/repo/join/${id}`);
 
       // Toast and return to home
       toast.success("Successfully created gated repository. Invite copied.");

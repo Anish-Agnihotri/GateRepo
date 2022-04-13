@@ -24,6 +24,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
   const [connectionStarted, setConnectionStarted] = useState<boolean>(false);
   // Web3React setup
   const { active, account, activate, deactivate, library } = useWeb3React();
+  const domain = process.env.NEXT_PUBLIC_URL;
 
   // Templated content
   const templateDescription: string = gate.creator.name
@@ -135,7 +136,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
       <Meta
         title={`GateRepo - @${gate.repoOwner}/${gate.repoName}`}
         description={templateDescription}
-        url={`https://gaterepo.com/repo/join/${gate.id}`}
+        url={`${domain}/repo/join/${gate.id}`}
       />
 
       {/* Logo */}
