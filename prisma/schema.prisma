@@ -67,6 +67,7 @@ model Gate {
   contractDecimals Int
   numTokens        Float
   numInvites       Int
+  readOnly         Boolean
   usedInvites      Int    @default(0)
   creator          User   @relation(fields: [creatorId], references: [id])
 }
