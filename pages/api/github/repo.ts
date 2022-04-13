@@ -54,9 +54,12 @@ export const getRepo = async (
     throw new Error("Repo does not exist or no access.");
   }
 
+  const isOrg = repository.owner.type === "Organization";
+
   return {
     fullName: repository.full_name,
     htmlURL: repository.html_url,
+    isOrg,
   };
 };
 

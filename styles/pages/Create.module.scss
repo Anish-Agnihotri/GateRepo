@@ -65,4 +65,9 @@
       background-color: var(--color-button-green-disabled-bg);
     }
   }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+  }
 }

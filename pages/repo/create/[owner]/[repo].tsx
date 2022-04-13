@@ -45,6 +45,8 @@ export default function Create({
   const [numTokens, setNumTokens] = useState<number>(1); // Number of required tokens
   const [loading, setLoading] = useState<boolean>(false); // Loading
   const [numParticipants, setNumParticipants] = useState<number>(10); // Maximum invite count
+  const [readOnly, setReadOnly] = useState<boolean>(false); // Read only permission
+  const [dynamicCheck, setDynamicCheck] = useState<boolean>(false); // Dynamic token check
 
   // Input validation
   const invalidAddress: boolean = !isValidAddress(address);
@@ -66,9 +68,12 @@ export default function Create({
         contract: address,
         tokens: numTokens,
         invites: numParticipants,
+        readOnly,
+        dynamicCheck,
       });
+      const domain = process.env.NEXT_PUBLIC_URL;
       // Copy invite to clipboard
-      navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${id}`);
+      navigator.clipboard.writeText(`${domain}/repo/join/${id}`);
 
       // Toast and return to home
       toast.success("Successfully created gated repository. Invite copied.");
@@ -127,6 +132,32 @@ export default function Create({
             value={numParticipants}
             onChange={(e) => setNumParticipants(Number(e.target.value))}
           />
+
+          {/* Dynamic token check */}
+          <label htmlFor="dynamicCheck" className={styles.checkbox}>
+            <input
+              id="dynamicCheck"
+              type="checkbox"
+              checked={dynamicCheck}
+              onChange={() => setDynamicCheck(!dynamicCheck)}
+            />
+            Dynamic token check
+          </label>
+
+          {/* Read only permission - Show only if repo is owned by org */}
+          {repo.isOrg ? (
+            <>
+              <label htmlFor="readOnly" className={styles.checkbox}>
+                <input
+                  id="readOnly"
+                  type="checkbox"
+                  checked={readOnly}
+                  onChange={() => setReadOnly(!readOnly)}
+                />
+                Read-only access
+              </label>
+            </>
+          ) : null}
 
           {/* Create gated repository */}
           <button

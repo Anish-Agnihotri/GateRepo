@@ -46,6 +46,7 @@ const getERC20Details = async (
  * @param {string} contract address
  * @param {number} numTokens count
  * @param {number} numInvites count
+ * @param {boolean} readOnly permission
  * @returns {Promise<string>} gated repository id
  */
 const createGatedRepo = async (
@@ -54,7 +55,9 @@ const createGatedRepo = async (
   repo: string,
   contract: string,
   numTokens: number,
-  numInvites: number
+  numInvites: number,
+  readOnly: boolean,
+  dynamicCheck: boolean
 ): Promise<string> => {
   // Check if you have permission to repo
   const repository: Repo = await getRepo(userId, owner, repo);
@@ -63,7 +66,9 @@ const createGatedRepo = async (
   // Collect ERC20 details
   const { name, decimals } = await getERC20Details(contract);
   // Collect latest block number to peg balance to
-  const blockNumber: number = await provider.getBlockNumber();
+  const blockNumber: number = !dynamicCheck
+    ? await provider.getBlockNumber()
+    : 0;
 
   // Create and return gated repo entry
   const { id }: { id: string } = await db.gate.create({
@@ -76,6 +81,8 @@ const createGatedRepo = async (
       contractDecimals: decimals,
       numTokens,
       numInvites,
+      readOnly,
+      dynamicCheck,
       creator: {
         connect: {
           id: userId,
@@ -104,12 +111,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     contract,
     tokens,
     invites,
+    readOnly,
+    dynamicCheck,
   }: {
     owner: string;
     repo: string;
     contract: string;
     tokens: number;
     invites: number;
+    readOnly: boolean;
+    dynamicCheck: boolean;
   } = req.body;
   if (!owner || !repo || !isValidAddress(contract) || !tokens || !invites) {
     res.status(500).send({ error: "Missing parameters." });
@@ -124,7 +135,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       repo,
       contract,
       tokens,
-      invites
+      invites,
+      readOnly,
+      dynamicCheck
     );
     res.status(200).send({ id: gateId });
   } catch (e) {

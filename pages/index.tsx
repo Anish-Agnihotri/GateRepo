@@ -188,8 +188,9 @@ function IndividualGate({
    * @param {string} gateId to copy
    */
   const copyInvite = (gateId: string) => {
+    const domain = process.env.NEXT_PUBLIC_URL;
     // Copy to clipboard
-    navigator.clipboard.writeText(`https://gaterepo.com/repo/join/${gateId}`);
+    navigator.clipboard.writeText(`${domain}/repo/join/${gateId}`);
 
     // Update button
     setCopyText("Copied!");
@@ -237,14 +238,23 @@ function IndividualGate({
         </p>
         <p>
           <strong>Token Check Block Number:</strong>{" "}
-          <a
-            href={`https://etherscan.io/block/${gate.blockNumber}`}
-            target="_blank;"
-            rel="noopener noreferrer"
-          >
-            #{formatNumber(gate.blockNumber)}
-          </a>
+          {!gate.dynamicCheck ? (
+            <a
+              href={`https://etherscan.io/block/${gate.blockNumber}`}
+              target="_blank;"
+              rel="noopener noreferrer"
+            >
+              #{formatNumber(gate.blockNumber)}
+            </a>
+          ) : (
+            "Current block (dynamic)"
+          )}
         </p>
+        {gate.readOnly ? (
+          <p>
+            <strong>Permission:</strong> Read-only
+          </p>
+        ) : null}
       </div>
 
       {/* Actions */}

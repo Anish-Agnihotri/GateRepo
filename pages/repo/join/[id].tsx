@@ -24,6 +24,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
   const [connectionStarted, setConnectionStarted] = useState<boolean>(false);
   // Web3React setup
   const { active, account, activate, deactivate, library } = useWeb3React();
+  const domain = process.env.NEXT_PUBLIC_URL;
 
   // Templated content
   const templateDescription: string = gate.creator.name
@@ -108,6 +109,8 @@ export default function Join({ gate }: { gate: GateExtended }) {
         address: account,
         signature,
         gateId: gate.id,
+        readOnly: gate.readOnly,
+        dynamicCheck: gate.dynamicCheck,
       });
 
       // If successful, toast and redirect
@@ -134,7 +137,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
       <Meta
         title={`GateRepo - @${gate.repoOwner}/${gate.repoName}`}
         description={templateDescription}
-        url={`https://gaterepo.com/repo/join/${gate.id}`}
+        url={`${domain}/repo/join/${gate.id}`}
       />
 
       {/* Logo */}
@@ -154,7 +157,8 @@ export default function Join({ gate }: { gate: GateExtended }) {
           <div className={styles.join__wallet}>
             <h3>{!active ? "Connect Wallet" : "Join Repository"}</h3>
             <p>
-              Accessing this repository requires having held{" "}
+              Accessing this repository requires{" "}
+              {gate.dynamicCheck ? "holding " : "having held "}
               {formatNumber(gate.numTokens)}{" "}
               <a
                 href={`https://etherscan.io/token/${gate.contract}`}
@@ -163,14 +167,20 @@ export default function Join({ gate }: { gate: GateExtended }) {
               >
                 {gate.contractName}
               </a>{" "}
-              token{gate.numTokens == 1 ? "" : "s"} at block{" "}
-              <a
-                href={`https://etherscan.io/block/${gate.blockNumber}`}
-                target="_blank;"
-                rel="noopener noreferrer"
-              >
-                #{formatNumber(gate.blockNumber)}
-              </a>
+              token{gate.numTokens == 1 ? "" : "s"}
+              {!gate.dynamicCheck ? (
+                <>
+                  {" "}
+                  at block{" "}
+                  <a
+                    href={`https://etherscan.io/block/${gate.blockNumber}`}
+                    target="_blank;"
+                    rel="noopener noreferrer"
+                  >
+                    #{formatNumber(gate.blockNumber)}
+                  </a>
+                </>
+              ) : null}
               .
             </p>
 

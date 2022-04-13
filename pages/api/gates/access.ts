@@ -98,7 +98,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     address, // Ethereum address with tokens
     signature, // Signature verifying Ethereum address ownership
     gateId, // Gated repo ID
-  }: { address: string; signature: string; gateId: string } = req.body;
+    readOnly, // Read-only permission
+    dynamicCheck, // Dynamic token check
+  }: {
+    address: string;
+    signature: string;
+    gateId: string;
+    readOnly: boolean;
+    dynamicCheck: boolean;
+  } = req.body;
   if (!address || !signature || !gateId) {
     res.status(500).send({ error: "Missing parameters." });
     return;
@@ -145,12 +153,31 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // Check if address held necessary tokens
-  const numTokensHeld: number = await collectVotesForToken(
-    address,
-    gate.contract,
-    gate.contractDecimals,
-    gate.blockNumber
-  );
+  let numTokensHeld: number;
+
+  // If dynamic check is enabled, check at current block
+  if (dynamicCheck) {
+    const defaultProvider = new ethers.providers.JsonRpcProvider(
+      process.env.RPC_API
+    );
+    const selector = "0x70a08231"; // balanceOf(address)
+    const data = selector + ethers.utils.hexZeroPad(address, 32).slice(2);
+    numTokensHeld =
+      Number(
+        await defaultProvider.call({
+          to: gate.contract,
+          data,
+        })
+      ) /
+      10 ** gate.contractDecimals;
+  } else {
+    numTokensHeld = await collectVotesForToken(
+      address,
+      gate.contract,
+      gate.contractDecimals,
+      gate.blockNumber
+    );
+  }
   if (gate.numTokens > numTokensHeld) {
     res.status(500).send({ error: "Insufficient token balance." });
     return;
@@ -230,6 +257,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       owner: gate.repoOwner,
       repo: gate.repoName,
       username,
+      permission: readOnly ? "pull" : undefined,
     });
     // If invitation id exists, update variable
     if (id) invitationId = id;
