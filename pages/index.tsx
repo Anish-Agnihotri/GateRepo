@@ -238,13 +238,17 @@ function IndividualGate({
         </p>
         <p>
           <strong>Token Check Block Number:</strong>{" "}
-          <a
-            href={`https://etherscan.io/block/${gate.blockNumber}`}
-            target="_blank;"
-            rel="noopener noreferrer"
-          >
-            #{formatNumber(gate.blockNumber)}
-          </a>
+          {!gate.dynamicCheck ? (
+            <a
+              href={`https://etherscan.io/block/${gate.blockNumber}`}
+              target="_blank;"
+              rel="noopener noreferrer"
+            >
+              #{formatNumber(gate.blockNumber)}
+            </a>
+          ) : (
+            "Current block (dynamic)"
+          )}
         </p>
         {gate.readOnly ? (
           <p>

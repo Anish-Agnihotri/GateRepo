@@ -110,6 +110,7 @@ export default function Join({ gate }: { gate: GateExtended }) {
         signature,
         gateId: gate.id,
         readOnly: gate.readOnly,
+        dynamicCheck: gate.dynamicCheck,
       });
 
       // If successful, toast and redirect
@@ -156,7 +157,8 @@ export default function Join({ gate }: { gate: GateExtended }) {
           <div className={styles.join__wallet}>
             <h3>{!active ? "Connect Wallet" : "Join Repository"}</h3>
             <p>
-              Accessing this repository requires having held{" "}
+              Accessing this repository requires{" "}
+              {gate.dynamicCheck ? "holding " : "having held "}
               {formatNumber(gate.numTokens)}{" "}
               <a
                 href={`https://etherscan.io/token/${gate.contract}`}
@@ -165,14 +167,20 @@ export default function Join({ gate }: { gate: GateExtended }) {
               >
                 {gate.contractName}
               </a>{" "}
-              token{gate.numTokens == 1 ? "" : "s"} at block{" "}
-              <a
-                href={`https://etherscan.io/block/${gate.blockNumber}`}
-                target="_blank;"
-                rel="noopener noreferrer"
-              >
-                #{formatNumber(gate.blockNumber)}
-              </a>
+              token{gate.numTokens == 1 ? "" : "s"}
+              {!gate.dynamicCheck ? (
+                <>
+                  {" "}
+                  at block{" "}
+                  <a
+                    href={`https://etherscan.io/block/${gate.blockNumber}`}
+                    target="_blank;"
+                    rel="noopener noreferrer"
+                  >
+                    #{formatNumber(gate.blockNumber)}
+                  </a>
+                </>
+              ) : null}
               .
             </p>
 

@@ -46,6 +46,7 @@ export default function Create({
   const [loading, setLoading] = useState<boolean>(false); // Loading
   const [numParticipants, setNumParticipants] = useState<number>(10); // Maximum invite count
   const [readOnly, setReadOnly] = useState<boolean>(false); // Read only permission
+  const [dynamicCheck, setDynamicCheck] = useState<boolean>(false); // Dynamic token check
 
   // Input validation
   const invalidAddress: boolean = !isValidAddress(address);
@@ -68,6 +69,7 @@ export default function Create({
         tokens: numTokens,
         invites: numParticipants,
         readOnly,
+        dynamicCheck,
       });
       const domain = process.env.NEXT_PUBLIC_URL;
       // Copy invite to clipboard
@@ -130,6 +132,17 @@ export default function Create({
             value={numParticipants}
             onChange={(e) => setNumParticipants(Number(e.target.value))}
           />
+
+          {/* Dynamic token check */}
+          <label htmlFor="dynamicCheck" className={styles.checkbox}>
+            <input
+              id="dynamicCheck"
+              type="checkbox"
+              checked={dynamicCheck}
+              onChange={() => setDynamicCheck(!dynamicCheck)}
+            />
+            Dynamic token check
+          </label>
 
           {/* Read only permission - Show only if repo is owned by org */}
           {repo.isOrg ? (
