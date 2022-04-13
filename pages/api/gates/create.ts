@@ -46,6 +46,7 @@ const getERC20Details = async (
  * @param {string} contract address
  * @param {number} numTokens count
  * @param {number} numInvites count
+ * @param {boolean} readOnly permission
  * @returns {Promise<string>} gated repository id
  */
 const createGatedRepo = async (
@@ -54,7 +55,8 @@ const createGatedRepo = async (
   repo: string,
   contract: string,
   numTokens: number,
-  numInvites: number
+  numInvites: number,
+  readOnly: boolean
 ): Promise<string> => {
   // Check if you have permission to repo
   const repository: Repo = await getRepo(userId, owner, repo);
@@ -76,6 +78,7 @@ const createGatedRepo = async (
       contractDecimals: decimals,
       numTokens,
       numInvites,
+      readOnly,
       creator: {
         connect: {
           id: userId,
@@ -104,12 +107,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     contract,
     tokens,
     invites,
+    readOnly,
   }: {
     owner: string;
     repo: string;
     contract: string;
     tokens: number;
     invites: number;
+    readOnly: boolean;
   } = req.body;
   if (!owner || !repo || !isValidAddress(contract) || !tokens || !invites) {
     res.status(500).send({ error: "Missing parameters." });
@@ -124,7 +129,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       repo,
       contract,
       tokens,
-      invites
+      invites,
+      readOnly
     );
     res.status(200).send({ id: gateId });
   } catch (e) {

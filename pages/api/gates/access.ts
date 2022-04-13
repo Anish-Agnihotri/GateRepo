@@ -98,7 +98,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     address, // Ethereum address with tokens
     signature, // Signature verifying Ethereum address ownership
     gateId, // Gated repo ID
-  }: { address: string; signature: string; gateId: string } = req.body;
+    readOnly, // Read-only permission
+  }: { address: string; signature: string; gateId: string; readOnly: boolean } =
+    req.body;
   if (!address || !signature || !gateId) {
     res.status(500).send({ error: "Missing parameters." });
     return;
@@ -230,6 +232,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       owner: gate.repoOwner,
       repo: gate.repoName,
       username,
+      permission: readOnly ? "pull" : undefined,
     });
     // If invitation id exists, update variable
     if (id) invitationId = id;
