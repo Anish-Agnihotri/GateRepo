@@ -55,7 +55,7 @@ npm run dev
 
 ## Environment variables
 
-1. `NEXTAUTH_URL`: Site link, `http://localhost:3000` if developing locally, `https://gaterepo.com` for this deployed instance
+1. `NEXTAUTH_URL` and `NEXT_PUBLIC_URL`: Set both as site link, `http://localhost:3000` if developing locally, `https://gaterepo.com` for this deployed instance
 2. `NEXTAUTH_SECRET`: Any randomly generated string as a secret, e.g.: `NpUFdWakhCjbuIIogCvj`
 3. `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`: Follow the instructions [here](https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app) for spinning up a new GitHub OAuth application. When asked, the authorization callback URL is `http://localhost:3000/api/auth/callback/github` (local) or `https://your_domain.com/api/auth/callback/github` (deployed). Once setup, your OAuth applications `Client ID` is your `GITHUB_CLIENT_ID` and your `Client Secret` is your `GITHUB_CLIENT_SECRET`
 4. `DATABASE_URL`: Postgres database connection URL
