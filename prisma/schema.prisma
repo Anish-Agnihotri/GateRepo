@@ -57,7 +57,7 @@ model VerificationToken {
 }
 
 model Gate {
-  id               String @id @default(cuid())
+  id               String  @id @default(cuid())
   creatorId        String
   repoOwner        String
   repoName         String
@@ -67,7 +67,8 @@ model Gate {
   contractDecimals Int
   numTokens        Float
   numInvites       Int
-  readOnly         Boolean
-  usedInvites      Int    @default(0)
-  creator          User   @relation(fields: [creatorId], references: [id])
+  readOnly         Boolean @default(false)
+  dynamicCheck     Boolean @default(false)
+  usedInvites      Int     @default(0)
+  creator          User    @relation(fields: [creatorId], references: [id])
 }
